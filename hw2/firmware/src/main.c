@@ -5,7 +5,7 @@
 #include<xc.h>                      // processor SFR definitions
 #include<sys/attribs.h>             // __ISR macro
 
-#include"spi.h"
+#include "../hw2.X/spi.h"
 
 #define NUMSAMPS 4096               // number of points in a waveform
 

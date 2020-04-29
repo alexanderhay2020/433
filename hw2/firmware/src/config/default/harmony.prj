@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Configuration>
   <Configurator>
-    <Name dnOrder="0" value="hw2"/>
+    <Name dnOrder="0" value="default"/>
     <Processor dnOrder="1" value="PIC32MX170F256B"/>
     <Harmony dnOrder="2" path="../../Harmony3"/>
     <Settings dnOrder="3">

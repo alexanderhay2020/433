@@ -3,7 +3,7 @@
   <projectmakefile>Makefile</projectmakefile>
   <defaultConf>0</defaultConf>
   <confs>
-    <conf name="hw2" type="2">
+    <conf name="default" type="2">
       <platformToolSN></platformToolSN>
       <languageToolchainDir>/opt/microchip/xc32/v2.30/bin</languageToolchainDir>
       <mdbdebugger version="1">
