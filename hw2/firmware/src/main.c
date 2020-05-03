@@ -4,12 +4,14 @@
 
 #include<xc.h>                      // processor SFR definitions
 #include<sys/attribs.h>             // __ISR macro
-
+#include<math.h>
 #include "../hw2.X/spi.h"
 
-#define NUMSAMPS 4096               // number of points in a waveform
+#define NUMSAMPS 4096               // number of points in a waveform (resolution)
+//#define PI 3.14159265358979323846  // pi
+#define PI acos(-1)
 
-static volatile int Waveform[NUMSAMPS]; // waveform
+static volatile float Waveform[NUMSAMPS]; // waveform
 
 
 // DEVCFG0
@@ -44,24 +46,64 @@ static volatile int Waveform[NUMSAMPS]; // waveform
 #pragma config IOL1WAY = OFF        // allow multiple reconfigurations
 
 void makeWaveform(){
-    int i = 0;
-    float A = 3.3;                    // Amplitude 3.3v
-
     unsigned short r;               // command register
     unsigned char c = 1;            // channel: 1 for A, 0 for B
     unsigned char b = 1;            // buffer: 1 for buffered, 0 for unbuffered
     unsigned char g = 1;            // gain: 1 for 1x, 0 for 2x
     unsigned char s = 1;            // shutdown: 1 for active, 0 for DAC
-//    unsigned short v = 0;           // voltage: converted
+//    unsigned short v = 0;         // voltage: converted
     
     r = (c<<15);
     r = r|(b<<14);
     r = r|(g<<13);
     r = r|(s<<12);
     
-    for (i=0; i<NUMSAMPS; i++){
-        Waveform[i] = (A/NUMSAMPS) * i;
+    // initialize values
+    float A = 3.3;                  // Amplitude 3.3v
+    float init = 0;                 // starts at 0, rail to rail
+    float angle = 0;                // store angle value
+    int i = 0;
+    
+    // iterators for amplitude and angle
+    float iter = (A-init)/(NUMSAMPS-1);     // math to iterate between rails
+    float ang_iter = PI/NUMSAMPS;  // angle delta
+    
+    // fill array
+    for (i = 0; i < NUMSAMPS; i++) {
+//        sine = 2 * init * sin(angle);
+        Waveform[i] = 2 * init * sin(angle);// works as intended, dunno why though
+        init += iter;
+        angle += ang_iter;
     }
+}
+void setVoltage(char a, unsigned short v) {
+    
+    unsigned short r;               // command register
+//    unsigned char c = 1;            // channel: 1 for A, 0 for B
+    unsigned char b = 1;            // buffer: 1 for buffered, 0 for unbuffered
+    unsigned char g = 1;            // gain: 1 for 1x, 0 for 2x
+    unsigned char s = 1;            // shutdown: 1 for active, 0 for DAC
+   
+    r = (a<<15);
+    r = r|(b<<14);
+    r = r|(g<<13);
+    r = r|(s<<12);
+	r = r|((v&0b1111111111)<<2); //rejecting excessive bits (above 10)
+	
+	CS = 0;
+	spi_io(r>>8);
+	spi_io(r);
+    CS = 1;
+    
+//    unsigned short t = 0;
+//	t= a << 15; //a is at the very end of the data transfer
+//	t = t | 0b0111000000000000;
+//	t = t | ((v&0b1111111111) <<2); //rejecting excessive bits (above 10)
+//	
+//	CS = 0;
+//	spi_io(t>>8);
+//	spi_io(t);
+//    CS = 1;
 }
 
 int main() {
@@ -87,10 +129,38 @@ int main() {
 
     __builtin_enable_interrupts();
     
+    initSPI();
+   
+    // tune
+    int a = 511;                // vertical shift
+    int b = 511;                // amplitude
+    int c = 100;                // period (1/f))
     
-    while (1) {
-        // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
-        // remember the core timer runs at half the sysclk
-
+    int i = 0;
+    int x = 0;
+    float slope = 0;
+    
+    while(1) {
+        _CP0_SET_COUNT(0);      // Setting Core Timer count to 0
+        
+        float tri = slope*x;    // y = mx+b
+        x++;
+        setVoltage(1, tri);
+        if(x<=100) {
+            slope = 10.23;
+        }
+        else if(x<=200) {
+            slope = -10.23;
+        }
+        else {
+            x = 0;
+        }
+        
+        float sine = a + b * sin((2*PI*i)/c);   // y = a sin(b(x + c)) + d
+        i++;
+        setVoltage(0, sine);
+        
+        while(_CP0_GET_COUNT() < 24000) {}  // wait 1000 times a second
     }
 }
+

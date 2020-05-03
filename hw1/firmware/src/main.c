@@ -1,16 +1,9 @@
 // Alexander Hay
 // ME 433 - Adv. Mechatronics
-// HW2
+// HW1
 
 #include<xc.h>                      // processor SFR definitions
 #include<sys/attribs.h>             // __ISR macro
-
-#include"spi.h"
-
-#define NUMSAMPS 4096               // number of points in a waveform
-
-static volatile int Waveform[NUMSAMPS]; // waveform
-
 
 // DEVCFG0
 #pragma config DEBUG = ON           // disable debugging
@@ -43,27 +36,6 @@ static volatile int Waveform[NUMSAMPS]; // waveform
 #pragma config PMDL1WAY = OFF       // allow multiple reconfigurations
 #pragma config IOL1WAY = OFF        // allow multiple reconfigurations
 
-void makeWaveform(){
-    int i = 0;
-    float A = 3.3;                    // Amplitude 3.3v
-
-    unsigned short r;               // command register
-    unsigned char c = 1;            // channel: 1 for A, 0 for B
-    unsigned char b = 1;            // buffer: 1 for buffered, 0 for unbuffered
-    unsigned char g = 1;            // gain: 1 for 1x, 0 for 2x
-    unsigned char s = 1;            // shutdown: 1 for active, 0 for DAC
-//    unsigned short v = 0;           // voltage: converted
-    
-    r = (c<<15);
-    r = r|(b<<14);
-    r = r|(g<<13);
-    r = r|(s<<12);
-    
-    for (i=0; i<NUMSAMPS; i++){
-        Waveform[i] = (A/NUMSAMPS) * i;
-    }
-}
-
 int main() {
 
     __builtin_disable_interrupts(); // disable interrupts while initializing things
@@ -86,11 +58,25 @@ int main() {
     LATAbits.LATA4 = 0;             // sets A4 to low
 
     __builtin_enable_interrupts();
-    
-    
+
     while (1) {
         // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
         // remember the core timer runs at half the sysclk
-
+        
+        // i=0; i%2 = 0
+        // i=1; i%2 = 1
+        // i=2; i%2 = 0
+        // i=3; i%2 = 1
+        
+        int i = 0;
+        
+        if(PORTBbits.RB4 == 0){
+            for(i=1; i<=4; i=i+1){
+            _CP0_SET_COUNT(0);
+            while(_CP0_GET_COUNT() < 24000000/2){ //waits for one sec. for half second, div by 2
+                LATAbits.LATA4 = (i%2);
+                }
+            } 
+        }
     }
 }

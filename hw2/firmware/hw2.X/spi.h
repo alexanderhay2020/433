@@ -1,6 +1,10 @@
+#include<xc.h>
+#include<sys/attribs.h>
+
 #ifndef SPI__H__
 #define SPI__H__
 
+#define CS LATAbits.LATA0
 void initSPI();
 unsigned char spi_io(unsigned char o);
 
