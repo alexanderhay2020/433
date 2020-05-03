@@ -7,12 +7,7 @@
 #include<math.h>
 #include "../hw2.X/spi.h"
 
-#define NUMSAMPS 4096               // number of points in a waveform (resolution)
-//#define PI 3.14159265358979323846  // pi
 #define PI acos(-1)
-
-static volatile float Waveform[NUMSAMPS]; // waveform
-
 
 // DEVCFG0
 #pragma config DEBUG = ON           // disable debugging
@@ -45,41 +40,10 @@ static volatile float Waveform[NUMSAMPS]; // waveform
 #pragma config PMDL1WAY = OFF       // allow multiple reconfigurations
 #pragma config IOL1WAY = OFF        // allow multiple reconfigurations
 
-void makeWaveform(){
-    unsigned short r;               // command register
-    unsigned char c = 1;            // channel: 1 for A, 0 for B
-    unsigned char b = 1;            // buffer: 1 for buffered, 0 for unbuffered
-    unsigned char g = 1;            // gain: 1 for 1x, 0 for 2x
-    unsigned char s = 1;            // shutdown: 1 for active, 0 for DAC
-//    unsigned short v = 0;         // voltage: converted
-    
-    r = (c<<15);
-    r = r|(b<<14);
-    r = r|(g<<13);
-    r = r|(s<<12);
-    
-    // initialize values
-    float A = 3.3;                  // Amplitude 3.3v
-    float init = 0;                 // starts at 0, rail to rail
-    float angle = 0;                // store angle value
-    int i = 0;
-    
-    // iterators for amplitude and angle
-    float iter = (A-init)/(NUMSAMPS-1);     // math to iterate between rails
-    float ang_iter = PI/NUMSAMPS;  // angle delta
-    
-    // fill array
-    for (i = 0; i < NUMSAMPS; i++) {
-//        sine = 2 * init * sin(angle);
-        Waveform[i] = 2 * init * sin(angle);// works as intended, dunno why though
-        init += iter;
-        angle += ang_iter;
-    }
-}
+
 void setVoltage(char a, unsigned short v) {
     
     unsigned short r;               // command register
-//    unsigned char c = 1;            // channel: 1 for A, 0 for B
     unsigned char b = 1;            // buffer: 1 for buffered, 0 for unbuffered
     unsigned char g = 1;            // gain: 1 for 1x, 0 for 2x
     unsigned char s = 1;            // shutdown: 1 for active, 0 for DAC
@@ -93,18 +57,9 @@ void setVoltage(char a, unsigned short v) {
 	CS = 0;
 	spi_io(r>>8);
 	spi_io(r);
-    CS = 1;
-    
-//    unsigned short t = 0;
-//	t= a << 15; //a is at the very end of the data transfer
-//	t = t | 0b0111000000000000;
-//	t = t | ((v&0b1111111111) <<2); //rejecting excessive bits (above 10)
-//	
-//	CS = 0;
-//	spi_io(t>>8);
-//	spi_io(t);
-//    CS = 1;
+    CS = 1; 
 }
+
 
 int main() {
 
