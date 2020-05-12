@@ -1,10 +1,16 @@
 // Alexander Hay
 // ME 433 - Adv. Mechatronics
-// HW3
+// HW4
 
 #include<xc.h>                      // processor SFR definitions
 #include<sys/attribs.h>             // __ISR macro
-#include "../hw3.X/i2c_master_noint.h"
+#include<string.h>
+#include<stdio.h>
+
+#include "../hw4.X/i2c_master_noint.h"
+#include "../hw4.X/ssd1306.h"
+#include "../hw4.X/font.h"
+
 
 // DEVCFG0
 #pragma config DEBUG = ON           // disable debugging
@@ -85,6 +91,18 @@ char readPin(unsigned char add, unsigned char reg){
     return recv;
 }
 
+void drawBox(){
+    int i = 0;
+    int j = 0;
+    
+    for(i=22;i<32;i++){
+        ssd1306_drawPixel(69,i,1);
+    }
+    
+    for(j=69;j<128;j++){
+        ssd1306_drawPixel(j,22,1);
+    }
+}
 
 int main() {
 
@@ -108,34 +126,48 @@ int main() {
     LATAbits.LATA4 = 1;             // sets A4 to low; 0-off, 1-on
     
     initI2C();
+    ssd1306_setup();
+    ssd1306_clear();
     
-    __builtin_enable_interrupts();
+//    char message[20];
+    char FPS[20];
 
-    unsigned char slave_add = 0x40;         // (given) 0100 0000
-    unsigned char button_pin = 0x13;        // GPIOB
-    unsigned char led_pin = 0x14;           // OLATA
-    unsigned char on = 0xFF;                // 1111 1111
-    unsigned char off = 0x00;               // 0000 0000
-    unsigned char button;                   
+    __builtin_enable_interrupts();              
 
     while(1) {
+        // characters are 5x8
+        // screen is 128x32
         
         // Heartbeat
+        ssd1306_clear();
         _CP0_SET_COUNT(0);      // Setting Core Timer count to 0
         LATAbits.LATA4 = !LATAbits.LATA4;
-        while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse
-        
-        button = readPin(slave_add, button_pin);      // read from slave, GPIOB
-        
-        while(!button){
-            
-            setPin(slave_add, led_pin, on);         // write to slave, OLATA, state
-            while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse
+           
+//        sprintf(message, "Hi bubi");
 
-            break;
-        }
+//        drawChar(0,0,h);
+//        drawChar(5,0,i);            //0-4 make the character, 5 is a one pixel space.
+
+//        drawString(0,0,message);
         
-        setPin(slave_add, led_pin, off);
+        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
+        ssd1306_update();
+        
+        drawChar(0,0,'1');
+        drawChar(0,8,'2');
+        drawChar(0,16,'3');
+        drawChar(0,24,'4');
+        drawBox();
+        
+        sprintf(FPS,"FPS: %3.1f",(24000000.0/_CP0_GET_COUNT()));
+        drawString(72,25,FPS);
+        ssd1306_update();
+        
+        while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse  
+
+//        sprintf(FPS,"FPS: %3.1f",(24000000.0/_CP0_GET_COUNT()));
+//        drawString(72,25,FPS);
+//        ssd1306_update();
     }
 }
 

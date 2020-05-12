@@ -1,10 +1,16 @@
 // Alexander Hay
 // ME 433 - Adv. Mechatronics
-// HW3
+// HW5
 
 #include<xc.h>                      // processor SFR definitions
 #include<sys/attribs.h>             // __ISR macro
-#include "../hw3.X/i2c_master_noint.h"
+#include<string.h>
+#include<stdio.h>
+
+#include "../hw5.X/i2c_master_noint.h"
+#include "../hw5.X/ssd1306.h"
+#include "../hw5.X/font.h"
+#include "../hw5.X/ws2812b.h"
 
 // DEVCFG0
 #pragma config DEBUG = ON           // disable debugging
@@ -85,6 +91,18 @@ char readPin(unsigned char add, unsigned char reg){
     return recv;
 }
 
+void drawBox(){
+    int i = 0;
+    int j = 0;
+    
+    for(i=23;i<32;i++){
+        ssd1306_drawPixel(67,i,1);
+    }
+    
+    for(j=67;j<128;j++){
+        ssd1306_drawPixel(j,23,1);
+    }
+}
 
 int main() {
 
@@ -108,34 +126,19 @@ int main() {
     LATAbits.LATA4 = 1;             // sets A4 to low; 0-off, 1-on
     
     initI2C();
+    ssd1306_setup();
+    ssd1306_clear();
+    ws2812b_setup();
     
-    __builtin_enable_interrupts();
-
-    unsigned char slave_add = 0x40;         // (given) 0100 0000
-    unsigned char button_pin = 0x13;        // GPIOB
-    unsigned char led_pin = 0x14;           // OLATA
-    unsigned char on = 0xFF;                // 1111 1111
-    unsigned char off = 0x00;               // 0000 0000
-    unsigned char button;                   
+    __builtin_enable_interrupts();              
 
     while(1) {
-        
         // Heartbeat
         _CP0_SET_COUNT(0);      // Setting Core Timer count to 0
         LATAbits.LATA4 = !LATAbits.LATA4;
         while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse
         
-        button = readPin(slave_add, button_pin);      // read from slave, GPIOB
         
-        while(!button){
-            
-            setPin(slave_add, led_pin, on);         // write to slave, OLATA, state
-            while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse
-
-            break;
-        }
-        
-        setPin(slave_add, led_pin, off);
     }
 }
 
