@@ -130,7 +130,7 @@ int main() {
         while(!button){
             
             setPin(slave_add, led_pin, on);         // write to slave, OLATA, state
-            while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse
+//            while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse
 
             break;
         }
@@ -138,4 +138,3 @@ int main() {
         setPin(slave_add, led_pin, off);
     }
 }
-
