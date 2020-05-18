@@ -44,10 +44,9 @@
 #pragma config IOL1WAY = OFF        // allow multiple reconfigurations
 
 
-void initI2C(void);
-void setPin(unsigned char add, unsigned char reg, unsigned char val);  // address, register, value
-char readPin(unsigned char add,unsigned char reg);           // address, register
-
+//void initI2C(void);
+//void setPin(unsigned char add, unsigned char reg, unsigned char val);  // address, register, value
+//char readPin(unsigned char add,unsigned char reg);           // address, register
 
 void initI2C(void){
 
@@ -64,7 +63,6 @@ void initI2C(void){
     i2c_master_stop();              // send a stop
 }
 
-
 void setPin(unsigned char add, unsigned char reg, unsigned char val){
     
     i2c_master_start();
@@ -73,7 +71,6 @@ void setPin(unsigned char add, unsigned char reg, unsigned char val){
     i2c_master_send(val);          // FF-yellow on; 00-yellow off
     i2c_master_stop();
 }
-
 
 char readPin(unsigned char add, unsigned char reg){
     
@@ -129,25 +126,25 @@ int main() {
     initI2C();
     ssd1306_setup();
     ssd1306_clear();
-    imu_setup();
+    char who = imu_setup();
+//    imu_setup();
     
     // enable them interrupts
     __builtin_enable_interrupts();              
 
     // variable declarations
     char FPS[20];
-//    unsigned char data[14], message[10];
+    char WAI[10];                // WAI - Who Am I
     
-    
-//    sprintf(message, "WHO_AM_I = %d", getWHO_AM_I());
-    
+    sprintf(WAI, "WHO: %d", who);
+    drawString(0,0,WAI);
+    ssd1306_update();
 
     while(1) {
         // characters are 5x8
         // screen is 128x32
         
         // Heartbeat
-        ssd1306_clear();
         _CP0_SET_COUNT(0);      // Setting Core Timer count to 0
         LATAbits.LATA4 = !LATAbits.LATA4;
         
@@ -155,10 +152,10 @@ int main() {
         ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
         ssd1306_update();
         
-        drawChar(0,0,'1');
-        drawChar(0,8,'2');
-        drawChar(0,16,'3');
-        drawChar(0,24,'4');
+//        drawChar(0,0,'1');
+//        drawChar(0,8,'2');
+//        drawChar(0,16,'3');
+//        drawChar(0,24,'4');
         
         // FPS stuff
         drawBox();
