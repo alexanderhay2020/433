@@ -92,12 +92,19 @@ void drawBox(){
     int i = 0;
     int j = 0;
     
-    for(i=23;i<32;i++){
-        ssd1306_drawPixel(67,i,1);
+    // upper left corner box placement
+    int x = 76;
+    int y = 22;
+    
+    
+    // horizontal line
+    for(i=y;i<32;i++){
+        ssd1306_drawPixel(x,i,1);
     }
     
-    for(j=67;j<128;j++){
-        ssd1306_drawPixel(j,23,1);
+    // vertical line
+    for(j=x;j<128;j++){
+        ssd1306_drawPixel(j,y,1);
     }
 }
 
@@ -134,37 +141,67 @@ int main() {
 
     // variable declarations
     char FPS[20];
-    char WAI[10];                // WAI - Who Am I
-    
+    char WAI[20];                // WAI - Who Am I
+    char temp_msg[20];
+    signed char data[14];
+
+    // Print IMU communication
     sprintf(WAI, "WHO: %d", who);
     drawString(0,0,WAI);
-    ssd1306_update();
-
+    
     while(1) {
         // characters are 5x8
         // screen is 128x32
+        ssd1306_clear();
         
         // Heartbeat
         _CP0_SET_COUNT(0);      // Setting Core Timer count to 0
         LATAbits.LATA4 = !LATAbits.LATA4;
-        
+
         // LCD heartbeat
-        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
+//        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
         ssd1306_update();
+    
+        // start with accel, iterate through
+        imu_read_multiple(IMU_ADDR, IMU_OUT_TEMP_L, data, 14);
         
-//        drawChar(0,0,'1');
-//        drawChar(0,8,'2');
-//        drawChar(0,16,'3');
-//        drawChar(0,24,'4');
+        short temp = getTemp(data);
+        sprintf(temp_msg, "Temp: %i", temp);
+        drawString(0,24,temp_msg);
+        
+        temp = getGyroX(data);
+        sprintf(temp_msg, "G_X: %i", temp);
+        drawString(0,0,temp_msg);
+        
+        temp = getGyroY(data);
+        sprintf(temp_msg, "G_Y: %i", temp);
+        drawString(0,8,temp_msg);
+        
+        temp = getGyroZ(data);
+        sprintf(temp_msg, "G_Z: %i", temp);
+        drawString(0,16,temp_msg);
+        
+        temp = getXLX(data);
+        sprintf(temp_msg, "A_X: %i", temp);
+        drawString(74,0,temp_msg);
+        
+        temp = getXLY(data);
+        sprintf(temp_msg, "A_Y: %i", temp);
+        drawString(74,8,temp_msg);
+        
+        temp = getXLZ(data);
+        sprintf(temp_msg, "A_Z: %i", temp);
+        drawString(74,16,temp_msg);
         
         // FPS stuff
-        drawBox();
-        sprintf(FPS,"FPS: %3.1f",(24000000.0/_CP0_GET_COUNT()));
-        drawString(72,25,FPS);
+//        drawBox();
+        sprintf(FPS, "FPS: %3.1f", (1.0*24000000)/_CP0_GET_COUNT());
+        drawString(74,24,FPS);
+
         ssd1306_update();
-        
         while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse  
-        
+
+
     }
 }
 

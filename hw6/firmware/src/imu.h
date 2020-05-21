@@ -11,6 +11,14 @@
 #define IMU_OUT_TEMP_L 0x20
 
 char imu_setup();
-void imu_read(unsigned char, signed short *, int);
+void imu_read_multiple(unsigned char, unsigned char, signed char *, int);
+
+short getTemp(signed char *);
+short getGyroX(signed char *);
+short getGyroY(signed char *);
+short getGyroZ(signed char *);
+short getXLX(signed char *);
+short getXLY(signed char *);
+short getXLZ(signed char *);
 
 #endif
