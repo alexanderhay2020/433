@@ -20,7 +20,8 @@ unsigned int adc_sample_convert(int pin) {
 
 void adc_setup() {
     // set analog pins with ANSEL
-
+    ANSELBbits.ANSB15 = 0; //pin 26
+    
     AD1CON3bits.ADCS = 1; // ADC clock period is Tad = 2*(ADCS+1)*Tpb = 2*2*20.3ns = 83ns > 75ns
     IEC0bits.AD1IE = 0; // Disable ADC interrupts
     AD1CON1bits.ADON = 1; // turn on A/D converter
@@ -59,4 +60,15 @@ int ctmu_read(int pin, int delay) {
     {}
     AD1CON1bits.DONE = 0; // ADC conversion done, clear flag
     return ADC1BUF0; // Get the value from the ADC
+}
+
+unsigned int do_cap(int pin, int delay) {
+  int i = 0;
+  int sum = 0;
+  int win = 10; // window to average over
+  while (i<=win) {
+    sum += ctmu_read(pin, delay);
+    i++;
+  }
+  return (sum/win);
 }

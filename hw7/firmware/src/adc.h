@@ -9,4 +9,6 @@ unsigned int adc_sample_convert(int pin);
 void ctmu_setup();
 int ctmu_read(int pin, int delay);
 
+unsigned int do_cap(int pin, int delay);
+
 #endif

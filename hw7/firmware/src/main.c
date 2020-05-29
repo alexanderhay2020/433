@@ -11,6 +11,7 @@
 #include "ssd1306.h"
 #include "font.h"
 #include "imu.h"
+#include "adc.h"
 
 // DEVCFG0
 #pragma config DEBUG = ON           // disable debugging
@@ -130,7 +131,8 @@ int main() {
     ssd1306_setup();
     ssd1306_clear();
     char who = imu_setup();
-//    imu_setup();
+    adc_setup();
+    ctmu_setup();
     
     // enable them interrupts
     __builtin_enable_interrupts();              
@@ -138,11 +140,16 @@ int main() {
     // variable declarations
     char FPS[20];
     char WAI[20];                // WAI - Who Am I
+    char msg[20];
+
+    int cap = 0;
 
     // Print IMU communication
     sprintf(WAI, "WHO: %d", who);
     drawString(0,0,WAI);
-    
+    ssd1306_update();
+    while(_CP0_GET_COUNT() < 9600000){;}    // 10Hz pulse display
+       
     while(1) {
         // characters are 5x8
         // screen is 128x32
@@ -154,16 +161,28 @@ int main() {
 
         // LCD heartbeat
         ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
-        ssd1306_update();
 
+        
+        // main stuff
+        // capacitance
+        cap = do_cap(9, (4800000/8)); // tuned
+        
+        if (cap>1120){
+            sprintf(msg, "Touched: no");
+        }
+        else{
+            sprintf(msg, "Touched: yes");
+        }
+        drawString(0,0,msg);
+
+        
         // FPS stuff
         drawBox();
         sprintf(FPS, "FPS: %3.1f", (1.0*24000000)/_CP0_GET_COUNT());
         drawString(74,24,FPS);
 
         ssd1306_update();
-        while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse  
-
+        while(_CP0_GET_COUNT() < 4800000/2){;}    // 5Hz pulse  
 
     }
 }
