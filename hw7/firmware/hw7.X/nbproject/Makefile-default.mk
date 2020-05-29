@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../src/main.c ../src/font.c ../src/i2c_master_noint.c ../src/imu.c ../src/ssd1306.c
+SOURCEFILES_QUOTED_IF_SPACED=../src/main.c ../src/font.c ../src/i2c_master_noint.c ../src/imu.c ../src/ssd1306.c ../src/adc.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1360937237/main.o ${OBJECTDIR}/_ext/1360937237/font.o ${OBJECTDIR}/_ext/1360937237/i2c_master_noint.o ${OBJECTDIR}/_ext/1360937237/imu.o ${OBJECTDIR}/_ext/1360937237/ssd1306.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1360937237/main.o.d ${OBJECTDIR}/_ext/1360937237/font.o.d ${OBJECTDIR}/_ext/1360937237/i2c_master_noint.o.d ${OBJECTDIR}/_ext/1360937237/imu.o.d ${OBJECTDIR}/_ext/1360937237/ssd1306.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1360937237/main.o ${OBJECTDIR}/_ext/1360937237/font.o ${OBJECTDIR}/_ext/1360937237/i2c_master_noint.o ${OBJECTDIR}/_ext/1360937237/imu.o ${OBJECTDIR}/_ext/1360937237/ssd1306.o ${OBJECTDIR}/_ext/1360937237/adc.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1360937237/main.o.d ${OBJECTDIR}/_ext/1360937237/font.o.d ${OBJECTDIR}/_ext/1360937237/i2c_master_noint.o.d ${OBJECTDIR}/_ext/1360937237/imu.o.d ${OBJECTDIR}/_ext/1360937237/ssd1306.o.d ${OBJECTDIR}/_ext/1360937237/adc.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1360937237/main.o ${OBJECTDIR}/_ext/1360937237/font.o ${OBJECTDIR}/_ext/1360937237/i2c_master_noint.o ${OBJECTDIR}/_ext/1360937237/imu.o ${OBJECTDIR}/_ext/1360937237/ssd1306.o
+OBJECTFILES=${OBJECTDIR}/_ext/1360937237/main.o ${OBJECTDIR}/_ext/1360937237/font.o ${OBJECTDIR}/_ext/1360937237/i2c_master_noint.o ${OBJECTDIR}/_ext/1360937237/imu.o ${OBJECTDIR}/_ext/1360937237/ssd1306.o ${OBJECTDIR}/_ext/1360937237/adc.o
 
 # Source Files
-SOURCEFILES=../src/main.c ../src/font.c ../src/i2c_master_noint.c ../src/imu.c ../src/ssd1306.c
+SOURCEFILES=../src/main.c ../src/font.c ../src/i2c_master_noint.c ../src/imu.c ../src/ssd1306.c ../src/adc.c
 
 
 
@@ -137,6 +137,12 @@ ${OBJECTDIR}/_ext/1360937237/ssd1306.o: ../src/ssd1306.c  nbproject/Makefile-${C
 	@${RM} ${OBJECTDIR}/_ext/1360937237/ssd1306.o 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1360937237/ssd1306.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -O1 -Werror -Wall -MMD -MF "${OBJECTDIR}/_ext/1360937237/ssd1306.o.d" -o ${OBJECTDIR}/_ext/1360937237/ssd1306.o ../src/ssd1306.c    -DXPRJ_default=$(CND_CONF)  -no-legacy-libc  $(COMPARISON_BUILD)  -mdfp=${DFP_DIR}  
 	
+${OBJECTDIR}/_ext/1360937237/adc.o: ../src/adc.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/1360937237" 
+	@${RM} ${OBJECTDIR}/_ext/1360937237/adc.o.d 
+	@${RM} ${OBJECTDIR}/_ext/1360937237/adc.o 
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1360937237/adc.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -O1 -Werror -Wall -MMD -MF "${OBJECTDIR}/_ext/1360937237/adc.o.d" -o ${OBJECTDIR}/_ext/1360937237/adc.o ../src/adc.c    -DXPRJ_default=$(CND_CONF)  -no-legacy-libc  $(COMPARISON_BUILD)  -mdfp=${DFP_DIR}  
+	
 else
 ${OBJECTDIR}/_ext/1360937237/main.o: ../src/main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/1360937237" 
@@ -167,6 +173,12 @@ ${OBJECTDIR}/_ext/1360937237/ssd1306.o: ../src/ssd1306.c  nbproject/Makefile-${C
 	@${RM} ${OBJECTDIR}/_ext/1360937237/ssd1306.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1360937237/ssd1306.o 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1360937237/ssd1306.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -O1 -Werror -Wall -MMD -MF "${OBJECTDIR}/_ext/1360937237/ssd1306.o.d" -o ${OBJECTDIR}/_ext/1360937237/ssd1306.o ../src/ssd1306.c    -DXPRJ_default=$(CND_CONF)  -no-legacy-libc  $(COMPARISON_BUILD)  -mdfp=${DFP_DIR}  
+	
+${OBJECTDIR}/_ext/1360937237/adc.o: ../src/adc.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/1360937237" 
+	@${RM} ${OBJECTDIR}/_ext/1360937237/adc.o.d 
+	@${RM} ${OBJECTDIR}/_ext/1360937237/adc.o 
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1360937237/adc.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -O1 -Werror -Wall -MMD -MF "${OBJECTDIR}/_ext/1360937237/adc.o.d" -o ${OBJECTDIR}/_ext/1360937237/adc.o ../src/adc.c    -DXPRJ_default=$(CND_CONF)  -no-legacy-libc  $(COMPARISON_BUILD)  -mdfp=${DFP_DIR}  
 	
 endif
 

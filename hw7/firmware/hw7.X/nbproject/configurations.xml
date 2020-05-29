@@ -8,6 +8,7 @@
       <itemPath>../src/i2c_master_noint.h</itemPath>
       <itemPath>../src/imu.h</itemPath>
       <itemPath>../src/ssd1306.h</itemPath>
+      <itemPath>../src/adc.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -21,6 +22,7 @@
       <itemPath>../src/i2c_master_noint.c</itemPath>
       <itemPath>../src/imu.c</itemPath>
       <itemPath>../src/ssd1306.c</itemPath>
+      <itemPath>../src/adc.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
