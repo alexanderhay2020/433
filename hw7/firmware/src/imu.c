@@ -1,6 +1,6 @@
 #include "imu.h"
-#include "../hw6.X/i2c_master_noint.h"
-#include "../hw6.X/ssd1306.h"
+#include "i2c_master_noint.h"
+#include "ssd1306.h"
 
 char imu_setup(){
   

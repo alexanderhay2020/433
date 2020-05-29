@@ -7,9 +7,9 @@
 #include<string.h>
 #include<stdio.h>
 
-#include "../hw6.X/i2c_master_noint.h"
-#include "../hw6.X/ssd1306.h"
-#include "../hw6.X/font.h"
+#include "i2c_master_noint.h"
+#include "ssd1306.h"
+#include "font.h"
 #include "imu.h"
 
 // DEVCFG0
@@ -89,7 +89,7 @@ void drawBox(void){
     int j = 0;
     
     // upper left corner box placement
-    int x = 76;
+    int x = 72;
     int y = 22;
     
     
@@ -138,11 +138,6 @@ int main() {
     // variable declarations
     char FPS[20];
     char WAI[20];                // WAI - Who Am I
-    char temp_msg[20];
-    signed char data[14];
-//    short temp_arr[5];
-    short temp = 0;
-    int factor = 1;
 
     // Print IMU communication
     sprintf(WAI, "WHO: %d", who);
@@ -158,73 +153,11 @@ int main() {
         LATAbits.LATA4 = !LATAbits.LATA4;
 
         // LCD heartbeat
-//        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
+        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
         ssd1306_update();
-    
-        // start with accel, iterate through
-        imu_read_multiple(IMU_ADDR, IMU_OUT_TEMP_L, data, 14);
-        
-        int i = 0;
-        
-        for (i=0;i<factor;i++){
-            temp += getTemp(data);}
-        temp=temp/factor;
-        sprintf(temp_msg, "Temp: %i", temp);
-        drawString(0,24,temp_msg);
-        temp=0;
-        
-        for (i=0;i<factor;i++){
-            temp += getGyroX(data);}
-        temp=temp/factor;
-        sprintf(temp_msg, "G_X: %i", temp);
-        drawString(0,0,temp_msg);
-        temp=0;
-        
-        for (i=0;i<factor;i++){
-            temp = getGyroY(data);}
-        temp=temp/factor;
-        sprintf(temp_msg, "G_Y: %i", temp);
-        drawString(0,8,temp_msg);
-        temp=0;
-        
-        for (i=0;i<factor;i++){
-            temp += getGyroZ(data);}
-        temp=temp/factor;        
-        sprintf(temp_msg, "G_Z: %i", temp);
-        drawString(0,16,temp_msg);
-        temp=0;
-        
-        for (i=0;i<factor;i++){
-            temp += getXLX(data);}
-        temp=temp/factor;
-        sprintf(temp_msg, "A_X: %i", temp);
-        drawString(74,0,temp_msg);
-        temp=0;
-        
-        for (i=0;i<factor;i++){
-            temp += getXLY(data);}
-        temp=temp/factor;        
-        sprintf(temp_msg, "A_Y: %i", temp);
-        drawString(74,8,temp_msg);
-        temp=0;
-        
-        for (i=0;i<factor;i++){
-            temp += getXLZ(data);}
-        temp=temp/factor;        
-        sprintf(temp_msg, "A_Z: %i", temp);
-        drawString(74,16,temp_msg);
-        temp=0;
-        
-        // inclinometer
-//        short x = getXLX(data);
-//        float x = getXLX(data)*0.006;
-//        short y = getXLY(data);
-//        drawPlus();
-//        drawX(x);
-//        drawY(y);
-        
+
         // FPS stuff
-//        drawBox();
+        drawBox();
         sprintf(FPS, "FPS: %3.1f", (1.0*24000000)/_CP0_GET_COUNT());
         drawString(74,24,FPS);
 
