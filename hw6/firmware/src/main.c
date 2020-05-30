@@ -186,37 +186,38 @@ int main() {
         sprintf(temp_msg, "Temp: %i", temp);
         drawString(0,24,temp_msg);
         
-        gyroX=gyroX/factor;
-        sprintf(temp_msg, "G_X: %i", gyroX);
-        drawString(0,0,temp_msg);
-        
-        gyroY=gyroY/factor;
-        sprintf(temp_msg, "G_Y: %i", gyroY);
-        drawString(0,8,temp_msg);
-        
-        gyroZ=gyroZ/factor;
-        sprintf(temp_msg, "G_Z: %i", gyroZ);
-        drawString(0,16,temp_msg);
+//        gyroX=gyroX/factor;
+//        sprintf(temp_msg, "G_X: %i", gyroX);
+//        drawString(0,0,temp_msg);
+//        
+//        gyroY=gyroY/factor;
+//        sprintf(temp_msg, "G_Y: %i", gyroY);
+//        drawString(0,8,temp_msg);
+//        
+//        gyroZ=gyroZ/factor;
+//        sprintf(temp_msg, "G_Z: %i", gyroZ);
+//        drawString(0,16,temp_msg);
         
         xlx=xlx/factor;
         sprintf(temp_msg, "A_X: %i", xlx);
-        drawString(74,0,temp_msg);
+//        drawString(74,0,temp_msg);
+        drawString(0,0,temp_msg);
                 
         xly=xly/factor;
         sprintf(temp_msg, "A_Y: %i", xly);
-        drawString(74,8,temp_msg);
+        drawString(0,8,temp_msg);
         
         xlz=xlz/factor;
         sprintf(temp_msg, "A_Z: %i", xlz);
-        drawString(74,16,temp_msg);
+        drawString(0,16,temp_msg);
         
           // inclinometer
 //        short x = getXLX(data);
 //        float x = getXLX(data)*0.006;
 //        short y = getXLY(data);
-//        drawPlus();
-//        drawX(x);
-//        drawY(y);
+        drawPlus();
+//        drawX(xlx);
+//        drawY(xly);
         
         // FPS stuff
 //        drawBox();
