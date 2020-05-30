@@ -130,7 +130,7 @@ int main() {
     ssd1306_setup();
     ssd1306_clear();
     char who = imu_setup();
-//    imu_setup();
+    imu_setup();
     
     // enable them interrupts
     __builtin_enable_interrupts();              
@@ -140,10 +140,8 @@ int main() {
     char WAI[20];                // WAI - Who Am I
     char temp_msg[20];
     signed char data[14];
-//    short temp_arr[5];
-    short temp = 0;
-    int factor = 1;
-
+    int factor = 500;
+    
     // Print IMU communication
     sprintf(WAI, "WHO: %d", who);
     drawString(0,0,WAI);
@@ -158,64 +156,61 @@ int main() {
         LATAbits.LATA4 = !LATAbits.LATA4;
 
         // LCD heartbeat
-//        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
-        ssd1306_update();
-    
+        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
+
+        
         // start with accel, iterate through
-        imu_read_multiple(IMU_ADDR, IMU_OUT_TEMP_L, data, 14);
         
         int i = 0;
         
+        short temp = 0;
+        short gyroX = 0;
+        short gyroY = 0;
+        short gyroZ = 0;
+        short xlx = 0;
+        short xly = 0;
+        short xlz = 0;
+        
         for (i=0;i<factor;i++){
-            temp += getTemp(data);}
+            imu_read_multiple(IMU_ADDR, IMU_OUT_TEMP_L, data, 14);
+            temp += getTemp(data);
+            gyroX += getGyroX(data);
+            gyroY += getGyroY(data);
+            gyroZ += getGyroZ(data);
+            xlx += getXLX(data);
+            xly += getXLY(data);
+            xlz += getXLZ(data);            
+        }
+               
         temp=temp/factor;
         sprintf(temp_msg, "Temp: %i", temp);
         drawString(0,24,temp_msg);
-        temp=0;
         
-        for (i=0;i<factor;i++){
-            temp += getGyroX(data);}
-        temp=temp/factor;
-        sprintf(temp_msg, "G_X: %i", temp);
+        gyroX=gyroX/factor;
+        sprintf(temp_msg, "G_X: %i", gyroX);
         drawString(0,0,temp_msg);
-        temp=0;
         
-        for (i=0;i<factor;i++){
-            temp = getGyroY(data);}
-        temp=temp/factor;
-        sprintf(temp_msg, "G_Y: %i", temp);
+        gyroY=gyroY/factor;
+        sprintf(temp_msg, "G_Y: %i", gyroY);
         drawString(0,8,temp_msg);
-        temp=0;
         
-        for (i=0;i<factor;i++){
-            temp += getGyroZ(data);}
-        temp=temp/factor;        
-        sprintf(temp_msg, "G_Z: %i", temp);
+        gyroZ=gyroZ/factor;
+        sprintf(temp_msg, "G_Z: %i", gyroZ);
         drawString(0,16,temp_msg);
-        temp=0;
         
-        for (i=0;i<factor;i++){
-            temp += getXLX(data);}
-        temp=temp/factor;
-        sprintf(temp_msg, "A_X: %i", temp);
+        xlx=xlx/factor;
+        sprintf(temp_msg, "A_X: %i", xlx);
         drawString(74,0,temp_msg);
-        temp=0;
-        
-        for (i=0;i<factor;i++){
-            temp += getXLY(data);}
-        temp=temp/factor;        
-        sprintf(temp_msg, "A_Y: %i", temp);
+                
+        xly=xly/factor;
+        sprintf(temp_msg, "A_Y: %i", xly);
         drawString(74,8,temp_msg);
-        temp=0;
         
-        for (i=0;i<factor;i++){
-            temp += getXLZ(data);}
-        temp=temp/factor;        
-        sprintf(temp_msg, "A_Z: %i", temp);
+        xlz=xlz/factor;
+        sprintf(temp_msg, "A_Z: %i", xlz);
         drawString(74,16,temp_msg);
-        temp=0;
         
-        // inclinometer
+          // inclinometer
 //        short x = getXLX(data);
 //        float x = getXLX(data)*0.006;
 //        short y = getXLY(data);
@@ -225,12 +220,11 @@ int main() {
         
         // FPS stuff
 //        drawBox();
-        sprintf(FPS, "FPS: %3.1f", (1.0*24000000)/_CP0_GET_COUNT());
+        sprintf(FPS, "FPS: %3.1f", (24000000.)/_CP0_GET_COUNT());
         drawString(74,24,FPS);
 
         ssd1306_update();
         while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse  
-
 
     }
 }
