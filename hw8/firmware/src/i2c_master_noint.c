@@ -5,9 +5,9 @@
 #include<xc.h>
 #include<sys/attribs.h>
 
-#include "../hw4.X/i2c_master_noint.h"
-#include "../hw4.X/ssd1306.h"
-#include "../hw4.X/font.h"
+#include "i2c_master_noint.h"
+#include "ssd1306.h"
+#include "font.h"
 
 void i2c_master_setup(void) {
     // using a large BRG to see it on the nScope, make it smaller after verifying that code works

@@ -41,6 +41,21 @@ rtccTime readRTCC() {
     rtccTime time;
     // copy over the BCD 
     // ...
-
+    time.sec01 = RTCTIMEbits.SEC01;
+    time.sec10 = RTCTIMEbits.SEC10;
+    time.min01 = RTCTIMEbits.MIN01;
+    time.min10 = RTCTIMEbits.MIN10;
+    time.hr01 = RTCTIMEbits.HR01;
+    time.hr10 = RTCTIMEbits.HR10;
+    
+    time.dy01 = RTCDATEbits.DAY01;
+    time.dy10 = RTCDATEbits.DAY10;
+    time.mn01 = RTCDATEbits.MONTH01;
+    time.mn10 = RTCDATEbits.MONTH10;
+    time.yr01 = RTCDATEbits.YEAR01;
+    time.yr10 = RTCDATEbits.YEAR10;
+    
+    time.wk = RTCDATEbits.w;
+    
     return time;
 }

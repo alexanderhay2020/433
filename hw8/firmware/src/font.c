@@ -3,9 +3,9 @@
 #include <string.h> // for memset
 #include <xc.h> // for the core timer delay
 
-#include "../hw4.X/i2c_master_noint.h"
-#include "../hw4.X/ssd1306.h"
-#include "../hw4.X/font.h" 
+#include "i2c_master_noint.h"
+#include "ssd1306.h"
+#include "font.h" 
 
 // make these functions:
 void drawChar(unsigned short x, unsigned short y, char ch) {

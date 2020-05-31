@@ -6,10 +6,12 @@
 #include<sys/attribs.h>             // __ISR macro
 #include<string.h>
 #include<stdio.h>
+#include <stdbool.h>
 
 #include "i2c_master_noint.h"
 #include "ssd1306.h"
 #include "font.h"
+#include "rtcc.h"
 
 // DEVCFG0
 #pragma config DEBUG = ON           // disable debugging
@@ -21,7 +23,7 @@
 
 // DEVCFG1
 #pragma config FNOSC = PRIPLL       // use primary oscillator with pll
-#pragma config FSOSCEN = OFF        // disable secondary oscillator
+#pragma config FSOSCEN = ON         // enable secondary oscillator
 #pragma config IESO = OFF           // disable switching clocks
 #pragma config POSCMOD = HS         // high speed crystal mode
 #pragma config OSCIOFNC = OFF       // disable clock output
@@ -124,24 +126,28 @@ int main() {
     TRISBbits.TRISB4 = 1;           // sets B4 as input
     LATAbits.LATA4 = 1;             // sets A4 to low; 0-off, 1-on
     
+    // variable declarations
+    char FPS[20];
+    char time_msg[50];
+    char count_msg[5];
+
+    unsigned long time = 0x21000000;      // 9pm (21:00:00)
+    unsigned long date = 0x20052703;      // Wednesday, 5/27/2020
+    
+    bool a = true;
+    int b = 1;
+    
+    int count = 0;
+   
     // initializations
     initI2C();
     ssd1306_setup();
-    ssd1306_clear();
-    char who = imu_setup();
-//    imu_setup();
+//    ssd1306_clear();
+    rtcc_setup(time, date);
     
     // enable them interrupts
     __builtin_enable_interrupts();              
 
-    // variable declarations
-    char FPS[20];
-    char WAI[20];                // WAI - Who Am I
-
-    // Print IMU communication
-    sprintf(WAI, "WHO: %d", who);
-    drawString(0,0,WAI);
-    
     while(1) {
         // characters are 5x8
         // screen is 128x32
@@ -149,21 +155,42 @@ int main() {
         
         // Heartbeat
         _CP0_SET_COUNT(0);      // Setting Core Timer count to 0
-        LATAbits.LATA4 = !LATAbits.LATA4;
-
+//        LATAbits.LATA4 = !LATAbits.LATA4;
+        a = !a;
+        
         // LCD heartbeat
-        ssd1306_drawPixel(0,0,LATAbits.LATA4); // flashes single LED on screen
+        if (a==true){
+            b = 1;
+        }
+        else{
+            b = 0;
+        }
+        ssd1306_drawPixel(127,31,b); // flashes single LED on screen
         ssd1306_update();
 
+        
+        // main stuff
+        
+        // counter
+        sprintf(count_msg, "cnt: %d", count);
+        drawString(0,0,count_msg);
+        
+        // ticker
+        rtccTime time = readRTCC();
+        sprintf(time_msg, "sec: %d%d", time.sec10, time.sec01);
+        drawString(0,8,time_msg);
+
+        
         // FPS stuff
         drawBox();
-        sprintf(FPS, "FPS: %3.1f", (1.0*24000000)/_CP0_GET_COUNT());
+        sprintf(FPS, "FPS: %3.1f", (500000.)/_CP0_GET_COUNT());
         drawString(74,24,FPS);
 
         ssd1306_update();
-        while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse  
-
-
+//        while(_CP0_GET_COUNT() < 24000000){;}    // 1Hz pulse
+        while(_CP0_GET_COUNT() < 12000000){;}    // 2Hz pulse  
+//        while(_CP0_GET_COUNT() < 4800000){;}    // 5Hz pulse
+        count ++;
     }
 }
 
