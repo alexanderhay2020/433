@@ -1,12 +1,12 @@
 // Alexander Hay
 // ME 433 - Adv. Mechatronics
-// HW6
+// HW8
 
 #include<xc.h>                      // processor SFR definitions
 #include<sys/attribs.h>             // __ISR macro
 #include<string.h>
 #include<stdio.h>
-#include <stdbool.h>
+#include<stdbool.h>
 
 #include "i2c_master_noint.h"
 #include "ssd1306.h"
@@ -130,6 +130,7 @@ int main() {
     char FPS[20];
     char time_msg[50];
     char count_msg[5];
+    char day_msg[11];
 
     unsigned long time = 0x21000000;      // 9pm (21:00:00)
     unsigned long date = 0x20052703;      // Wednesday, 5/27/2020
@@ -142,7 +143,6 @@ int main() {
     // initializations
     initI2C();
     ssd1306_setup();
-//    ssd1306_clear();
     rtcc_setup(time, date);
     
     // enable them interrupts
@@ -177,14 +177,19 @@ int main() {
         
         // ticker
         rtccTime time = readRTCC();
-        sprintf(time_msg, "sec: %d%d", time.sec10, time.sec01);
+        dayOfTheWeek(time.wk, day_msg);
+        
+        sprintf(time_msg, "date: %d%d/%d%d/%d%d", time.mn10, time.mn01, time.dy10, time.dy01, time.yr10, time.yr01);
         drawString(0,8,time_msg);
-
+        sprintf(time_msg, "time: %d%d:%d%d:%d%d", time.hr10, time.hr01, time.min10, time.min01, time.sec10, time.sec01);
+        drawString(0,16,time_msg);
+        dayOfTheWeek(time.wk, day_msg);
+        drawString(0,24,day_msg);
         
         // FPS stuff
-        drawBox();
+//        drawBox();
         sprintf(FPS, "FPS: %3.1f", (500000.)/_CP0_GET_COUNT());
-        drawString(74,24,FPS);
+        drawString(74,0,FPS);
 
         ssd1306_update();
 //        while(_CP0_GET_COUNT() < 24000000){;}    // 1Hz pulse
